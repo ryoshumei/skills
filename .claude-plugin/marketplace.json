@@ -1,0 +1,27 @@
+{
+  "name": "ryoshumei",
+  "owner": {
+    "name": "ryoshumei",
+    "url": "https://github.com/ryoshumei"
+  },
+  "description": "ryoshumei's Claude Code plugins.",
+  "plugins": [
+    {
+      "name": "implement-orchestrated",
+      "source": {
+        "source": "github",
+        "repo": "ryoshumei/implement-orchestrated"
+      },
+      "description": "Orchestrator-subagent /implement built on Matt Pocock's skills: parallel coders in worktrees, per-ticket review, fixes sent back to the same coder.",
+      "category": "engineering",
+      "keywords": ["orchestrator", "subagents", "worktree", "tdd", "mattpocock-skills"]
+    },
+    {
+      "name": "naming-ja",
+      "source": "./plugins/naming-ja",
+      "description": "Name an app or product for Japan with its owner: taste first, a wide list across Japanese naming styles, owner-made cuts, and App Store Japan, trademark, domain and meaning checks.",
+      "category": "productivity",
+      "keywords": ["naming", "branding", "japanese", "trademark", "app-store"]
+    }
+  ]
+}

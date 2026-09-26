@@ -1,0 +1,23 @@
+{
+  "name": "naming-ja",
+  "version": "0.1.0",
+  "description": "Name an app or product for Japan with its owner: taste first, a wide list across Japanese naming styles, owner-made cuts, and App Store Japan, trademark, domain and meaning checks.",
+  "author": {
+    "name": "ryoshumei",
+    "url": "https://github.com/ryoshumei"
+  },
+  "homepage": "https://github.com/ryoshumei/skills/tree/main/plugins/naming-ja",
+  "repository": "https://github.com/ryoshumei/skills",
+  "license": "MIT",
+  "keywords": [
+    "claude-code",
+    "naming",
+    "branding",
+    "japanese",
+    "trademark",
+    "app-store"
+  ],
+  "skills": [
+    "./skills/naming-ja"
+  ]
+}
