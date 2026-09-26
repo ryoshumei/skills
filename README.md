@@ -28,8 +28,33 @@ To turn a plugin on for everyone who works in a project, add this to the project
 }
 ```
 
-- This marketplace lists every plugin. Claude Code keeps one marketplace per name, so adding another source named `ryoshumei` later replaces this one.
-- Our Claude Code on the web session didn't install plugins from git URLs or from extra marketplaces. For web sessions, copy the skill folder into the project's `.claude/skills/` instead, for example `cp -r plugins/naming-ja/skills/naming-ja <project>/.claude/skills/`.
+Cloud sessions, including Claude Code on the web, don't load the plugins that a repository's `.claude/settings.json` turns on ([docs](https://code.claude.com/docs/en/plugins/install)). For those sessions, copy the skill folder into the project instead, where it's part of the clone: `cp -r plugins/naming-ja/skills/naming-ja <project>/.claude/skills/`.
+
+## Updates
+
+```bash
+claude plugin marketplace update ryoshumei
+claude plugin update naming-ja@ryoshumei
+```
+
+Restart Claude Code afterwards. Each release bumps `version` in the plugin's `plugin.json`, and `claude plugin update` compares versions, so it says "already at the latest version" until a new one is published.
+
+Auto-update is off by default for third-party marketplaces like this one. To turn it on, run `/plugin`, open the **Marketplaces** tab, select `ryoshumei`, and select **Enable auto-update**.
+
+## Moving from ryoshumei/implement-orchestrated
+
+The `ryoshumei` marketplace used to live in the implement-orchestrated repo. It still works there and still delivers implement-orchestrated updates, but it doesn't list naming-ja.
+
+Claude Code keeps one marketplace per name, and it refuses to add `ryoshumei/skills` while `ryoshumei` still points at the old repo. To switch:
+
+```bash
+claude plugin marketplace remove ryoshumei
+claude plugin marketplace add ryoshumei/skills
+claude plugin install implement-orchestrated@ryoshumei
+claude plugin install naming-ja@ryoshumei
+```
+
+Removing the old marketplace uninstalls its plugins and deletes their saved options, so the first `install` puts implement-orchestrated back.
 
 ## What naming-ja needs
 
