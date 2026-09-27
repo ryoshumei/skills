@@ -1,0 +1,8 @@
+{
+  "format": "kune-trace-ledger",
+  "format_version": 1,
+  "profile": "health-visit",
+  "timezone": "Asia/Tokyo",
+  "created_at": "2026-09-16T21:04:00+09:00",
+  "sample": true
+}

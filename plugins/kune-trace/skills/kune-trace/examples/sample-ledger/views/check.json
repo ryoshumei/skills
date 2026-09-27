@@ -1,0 +1,17 @@
+{
+  "checked_at": "2026-09-24T21:08:00+09:00",
+  "ok": true,
+  "errors": 0,
+  "warnings": 0,
+  "drafts": [
+    "L0006"
+  ],
+  "head": {
+    "seq": 14,
+    "hash": "4056bc3d6140be65aa5e0d6bd6363ab7a916561e89bb90bbe8f417130911cde6"
+  },
+  "anchor": {
+    "seq": 14,
+    "hash": "4056bc3d6140be65aa5e0d6bd6363ab7a916561e89bb90bbe8f417130911cde6"
+  }
+}

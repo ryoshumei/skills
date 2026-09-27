@@ -1,0 +1,23 @@
+{
+  "name": "kune-trace",
+  "version": "0.0.1",
+  "description": "Keep traceable records built from conversations: every line of a record or visit memo cites its source, with clock-stamped times, a claim type and an append-only, hash-chained change log. Health-visit labels first. Gives no medical guidance. Draft.",
+  "author": {
+    "name": "ryoshumei",
+    "url": "https://github.com/ryoshumei"
+  },
+  "homepage": "https://github.com/ryoshumei/skills/tree/main/plugins/kune-trace",
+  "repository": "https://github.com/ryoshumei/skills",
+  "license": "MIT",
+  "keywords": [
+    "claude-code",
+    "traceability",
+    "provenance",
+    "records",
+    "japanese",
+    "audit-log"
+  ],
+  "skills": [
+    "./skills/kune-trace"
+  ]
+}
