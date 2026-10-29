@@ -22,6 +22,13 @@
       "description": "Name an app or product for Japan with its owner: taste first, a wide list across Japanese naming styles, owner-made cuts, and App Store Japan, trademark, domain and meaning checks.",
       "category": "productivity",
       "keywords": ["naming", "branding", "japanese", "trademark", "app-store"]
+    },
+    {
+      "name": "break-reminder",
+      "source": "./plugins/break-reminder",
+      "description": "Pomodoro-style break reminders on macOS: a sound and a dialog after 25 minutes of keyboard and mouse activity, a notification when the 5-minute break ends, and time away from the desk restarts the clock.",
+      "category": "productivity",
+      "keywords": ["pomodoro", "break", "reminder", "macos"]
     }
   ]
 }

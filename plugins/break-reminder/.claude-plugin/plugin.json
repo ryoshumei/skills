@@ -1,0 +1,22 @@
+{
+  "name": "break-reminder",
+  "version": "0.1.0",
+  "description": "Pomodoro-style break reminders on macOS: a sound and a dialog after 25 minutes of keyboard and mouse activity, a notification when the 5-minute break ends, and time away from the desk restarts the clock.",
+  "author": {
+    "name": "ryoshumei",
+    "url": "https://github.com/ryoshumei"
+  },
+  "homepage": "https://github.com/ryoshumei/skills/tree/main/plugins/break-reminder",
+  "repository": "https://github.com/ryoshumei/skills",
+  "license": "MIT",
+  "keywords": [
+    "claude-code",
+    "pomodoro",
+    "break",
+    "reminder",
+    "macos"
+  ],
+  "skills": [
+    "./skills/break-reminder"
+  ]
+}
