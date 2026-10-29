@@ -7,6 +7,7 @@ ryoshumei's Claude Code plugins, in one marketplace named `ryoshumei`.
 | `naming-ja` | Names an app or product for Japan together with its owner. It asks about their taste first and generates a wide list across Japanese naming styles. The owner makes every cut. Every batch is screened against the Japanese App Store and same-reading trademarks before the owner sees it, and the finalists also get J-PlatPat, domain and meaning checks in Japanese, English and Chinese. | [`plugins/naming-ja`](plugins/naming-ja) |
 | `implement-orchestrated` | An orchestrator-subagent `/implement` built on Matt Pocock's skills. It runs parallel coders in worktrees, reviews each ticket, and sends fixes back to the same coder. | [ryoshumei/implement-orchestrated](https://github.com/ryoshumei/implement-orchestrated) |
 | `break-reminder` | Reminds you to take breaks on macOS, pomodoro-style. After 25 minutes of keyboard and mouse activity, a sound and a dialog ask for a 5-minute break, and a notification says when it's over. Time away from the desk restarts the clock: 15 minutes without input, or the Mac asleep for at least a break's length. So nights and lunch stay quiet. | [`plugins/break-reminder`](plugins/break-reminder) |
+| `small-start` | Runs a hard-to-start day from one session, so you never switch sessions. It gathers the day's calendar, chat, mail and PR state into a click-through slide deck kept at one URL, and offers one small next step with a default answer. It hands work to the session or agent that owns it, checks results itself with screenshots, and waits on deploys in the background. Irreversible steps come to you as one `!` line. | [`plugins/small-start`](plugins/small-start) |
 
 ## Install
 
@@ -15,6 +16,7 @@ claude plugin marketplace add ryoshumei/skills
 claude plugin install naming-ja@ryoshumei
 claude plugin install implement-orchestrated@ryoshumei
 claude plugin install break-reminder@ryoshumei
+claude plugin install small-start@ryoshumei
 ```
 
 Inside a session, `/plugin marketplace add ryoshumei/skills` and `/plugin install naming-ja@ryoshumei` do the same.
@@ -45,7 +47,7 @@ Auto-update is off by default for third-party marketplaces like this one. To tur
 
 ## Moving from ryoshumei/implement-orchestrated
 
-The `ryoshumei` marketplace used to live in the implement-orchestrated repo. It still works there and still delivers implement-orchestrated updates, but it doesn't list naming-ja or break-reminder.
+The `ryoshumei` marketplace used to live in the implement-orchestrated repo. It still works there and still delivers implement-orchestrated updates, but it doesn't list naming-ja, break-reminder or small-start.
 
 Claude Code keeps one marketplace per name, and it refuses to add `ryoshumei/skills` while `ryoshumei` still points at the old repo. To switch:
 
@@ -55,6 +57,7 @@ claude plugin marketplace add ryoshumei/skills
 claude plugin install implement-orchestrated@ryoshumei
 claude plugin install naming-ja@ryoshumei
 claude plugin install break-reminder@ryoshumei
+claude plugin install small-start@ryoshumei
 ```
 
 Removing the old marketplace uninstalls its plugins and deletes their saved options, so the first `install` puts implement-orchestrated back.
@@ -73,6 +76,13 @@ Removing the old marketplace uninstalls its plugins and deletes their saved opti
 - It runs as a background task of a Claude Code session. It sets up a login item only if you ask for one.
 - Every start, break, break over, away, back, sleep and stop is logged to `~/Library/Logs/break-reminder.log`, so "why was it quiet?" has an answer.
 - Tests: `sh plugins/break-reminder/skills/break-reminder/tests/test-break-reminder.sh` takes a few seconds. Fake `date` and `sleep` commands simulate the hours, and nothing shows on screen.
+
+## What small-start needs
+
+- Claude Code with SendMessage and ListAgents, so this session can hand work to your other sessions. Background agents cover work that has no owner session.
+- A way to show slides: the Artifact tool's slide deck if your account has it, otherwise any HTML page whose slides advance on click.
+- Optional, each one makes the morning summary fuller: calendar, chat and mail connectors, the `gh` CLI for PRs and deploy runs, and a browser automation tool for screenshots.
+- It works best next to `break-reminder`, which keeps the breaks honest.
 
 ## Layout
 
