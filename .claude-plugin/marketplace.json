@@ -29,6 +29,13 @@
       "description": "Pomodoro-style break reminders on macOS: a sound and a dialog after 25 minutes of keyboard and mouse activity, a notification when the 5-minute break ends, and time away from the desk restarts the clock.",
       "category": "productivity",
       "keywords": ["pomodoro", "break", "reminder", "macos"]
+    },
+    {
+      "name": "small-start",
+      "source": "./plugins/small-start",
+      "description": "Run a hard-to-start day from one Claude Code session: a slide deck kept current at one URL, one small next step with a default answer, work handed to the session or agent that owns it, results checked with screenshots, and deploys waited on in the background.",
+      "category": "productivity",
+      "keywords": ["adhd", "focus", "orchestration", "daily-plan", "slides"]
     }
   ]
 }

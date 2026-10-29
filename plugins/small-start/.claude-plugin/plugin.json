@@ -1,0 +1,22 @@
+{
+  "name": "small-start",
+  "version": "0.1.0",
+  "description": "Run a hard-to-start day from one Claude Code session: a slide deck kept current at one URL, one small next step with a default answer, work handed to the session or agent that owns it, results checked with screenshots, and deploys waited on in the background.",
+  "author": {
+    "name": "ryoshumei",
+    "url": "https://github.com/ryoshumei"
+  },
+  "homepage": "https://github.com/ryoshumei/skills/tree/main/plugins/small-start",
+  "repository": "https://github.com/ryoshumei/skills",
+  "license": "MIT",
+  "keywords": [
+    "claude-code",
+    "adhd",
+    "focus",
+    "orchestration",
+    "daily-plan"
+  ],
+  "skills": [
+    "./skills/small-start"
+  ]
+}
