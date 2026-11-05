@@ -14,6 +14,7 @@ Distilled from one real day: two PRs went through staging into one production re
 | Rule | What it means | Why |
 |---|---|---|
 | One front desk | The user talks only to this session. Work goes to the session that already owns it (SendMessage) or to a background agent. | Every session switch makes the user reload the context. |
+| Watch, don't ask for reports | Owner sessions don't send progress. The front desk watches each session's transcript for finished turns, and the day's deploy runs, and passes on only questions, results and failures. SendMessage carries handoffs and decisions, never "got it" or "no reply needed". | Measured over 3 days: about 50–60k tokens on reports and watching, half of it the same event reported twice. Each SendMessage also carries about 600 characters of fixed wrapper. |
 | Reports are slides | One click-through deck per day, updated at the same URL after every change. Slides advance on click and open on slide one; nothing autoplays. Chat stays at one or two lines, the link, and at most one question. | Long text is hard to read on these days. |
 | One step, with a default | The last slide is always "the one thing for you". Every question ends with a default, such as "Default: yes. Reply go." | A menu of options hands the decision back. |
 | Claude checks | Claude checks the result itself, with before and after screenshots, instead of asking the user to look. | "Go check it and send me a screenshot." |
@@ -39,12 +40,22 @@ Distilled from one real day: two PRs went through staging into one production re
 
 - When a session already owns the work, SendMessage it:
   - Make the first line stand on its own. The user sees only that line in the preview.
-  - Send the current facts (main's commit, whether staging is free, other deploys), numbered asks, and "reply in three lines when done or stuck".
-  - Subscribe with `notify_when_idle: true` instead of polling.
-  - A peer session needs the user's approval typed in that session; a relayed "go" doesn't count. Tell the user the peer will ask in its own window.
+  - Send the current facts (main's commit, whether staging is free, other deploys) and numbered asks. Add: "Don't send the front desk progress. Ask the user in your own window, starting with 'Question:'."
+  - Message a peer only to hand over work or pass on a decision. Don't send acknowledgements.
+  - A peer session needs the user's approval typed in that session; a relayed "go" doesn't count. Tell the user the peer will ask in its own window. A relayed decision (a design choice, a priority) is fine; say it is not an approval of any action.
+- To open a new owner session yourself, run `claude --bg -n <name> "<handoff>"` in the repository. The user opens it with `claude attach <name>`.
 - Otherwise, use a background agent. Treat its report as a claim: recheck the key fact yourself. When it shows you told the user something wrong, correct it plainly.
 - Shared environments: staging holds one branch at a time. Before deploying, check who deployed last, and tell the sessions that might deploy that you are taking staging for about 20 minutes.
 - Bundle releases: verify each PR on staging, merge it, then ship them together under one production tag.
+
+## 2b. Watch the sessions
+
+- Run `scripts/watch-sessions.sh <sessions.tsv> '<tag-regex>'` with Bash `run_in_background`. It exits on the first event and prints the session name and the first 400 characters of its last reply, so you rarely need to read the transcript again. Start it again after each event. A Monitor would expire every 30 minutes instead.
+- `sessions.tsv` holds one line per owner session: its name, a tab, and its transcript `~/.claude/projects/<bucket>/<session-id>.jsonl`. Find the file by the session's title: `grep -l '"customTitle":"<name>"'` on recently changed transcripts.
+- A turn ends with a `stop_hook_summary` record; Claude Desktop sessions don't write `turn_duration`.
+- The script skips progress-only turns and a question it already passed on. It surfaces questions, results, failures and deploy runs.
+- When a session moves into a new worktree, its transcript moves to that worktree's folder. Update the path, or the watch goes silent.
+- After four quiet hours the script stops. Don't restart it overnight; restart it when the user is back.
 
 ## 3. Irreversible steps go to the user as one `!` line
 
