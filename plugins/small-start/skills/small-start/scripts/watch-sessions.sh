@@ -15,13 +15,14 @@ while IFS=$'\t' read -r n f; do
 done < "$LIST"
 
 # ターンの終わり = stop_hook_summary（Desktop のセッションは turn_duration を書かない）
+# ターンの後にも行が増え続けることがあるので、2000 行さかのぼって探す
 last_turn() {
-  tail -n 400 "$1" 2>/dev/null | grep '"subtype":"stop_hook_summary"' | tail -n 1 | jq -r '.timestamp // empty' 2>/dev/null
+  tail -n 2000 "$1" 2>/dev/null | grep '"subtype":"stop_hook_summary"' | tail -n 1 | jq -r '.timestamp // empty' 2>/dev/null
 }
 
 # 最後の回答の先頭 400 字（これで足りるようにして、前台が transcript を読み直さずに済むようにする）
 last_text() {
-  tail -n 400 "$1" 2>/dev/null \
+  tail -n 2000 "$1" 2>/dev/null \
     | jq -c 'select(.type=="assistant") | [.message.content[]? | select(.type=="text") | .text] | join(" ") | select(length>0)' 2>/dev/null \
     | tail -n 1 | jq -r 'gsub("\n";" ") | gsub("\\*\\*";"") | .[0:400]' 2>/dev/null
 }
@@ -32,7 +33,19 @@ deploys() {
     --jq ".workflow_runs[] | select(.head_branch | test(\"$TAGRE\")) | \"\(.head_branch) \(.status) \(.conclusion // \"-\")\"" 2>/dev/null | sort
 }
 
-for i in "${!FILES[@]}"; do LAST[$i]=$(last_turn "${FILES[$i]}"); done
+# 状態ファイルはセッション名で引く（sessions.tsv の並びが変わっても取り違えない）
+key() { printf '%s' "$1" | { shasum 2>/dev/null || sha1sum; } | cut -c1-12; }
+
+# 起点は前回の見張りから引き継ぐ。起動し直すあいだに終わったターンも取りこぼさない
+for i in "${!FILES[@]}"; do
+  kf="$STATE/.watch-last-$(key "${NAMES[$i]}")"
+  if [ -s "$kf" ]; then
+    LAST[$i]=$(cat "$kf")
+  else
+    LAST[$i]=$(last_turn "${FILES[$i]}")
+    printf '%s' "${LAST[$i]}" > "$kf"
+  fi
+done
 PREV=$(deploys)
 END=$(( $(date +%s) + 4 * 3600 ))
 n=0
@@ -42,14 +55,16 @@ while [ "$(date +%s)" -lt "$END" ]; do
     t=$(last_turn "${FILES[$i]}")
     if [ -n "$t" ] && [ "$t" != "${LAST[$i]}" ]; then
       LAST[$i]=$t
+      printf '%s' "$t" > "$STATE/.watch-last-$(key "${NAMES[$i]}")"
       txt=$(last_text "${FILES[$i]}")
       # 途中経過だけの回は出さない（質問があれば出す）
-      if printf '%s' "$txt" | grep -qiE "still running|still going|hasn.t reported|sent it back|one more round|another round|review is running|还在跑|还在等|退回" && ! printf '%s' "$txt" | grep -q "Question"; then
+      # 「退回」だけだと、結果報告の「退回：」（戻し方の節）まで飛ばしてしまうので、差し戻しの言い方に絞る
+      if printf '%s' "$txt" | grep -qiE "still running|still going|hasn.t reported|sent it back|one more round|another round|review is running|还在跑|还在等|被退回|退回了|退回重做|打回" && ! printf '%s' "$txt" | grep -q "Question"; then
         continue
       fi
       # 同じ質問のくり返しは出さない
       q=$(printf '%s' "$txt" | grep -o "Question:.*" | head -c 200)
-      qf="$STATE/.watch-lastq-$i"
+      qf="$STATE/.watch-lastq-$(key "${NAMES[$i]}")"
       if [ -n "$q" ] && [ -f "$qf" ] && [ "$q" = "$(cat "$qf")" ]; then
         continue
       fi

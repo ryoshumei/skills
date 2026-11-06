@@ -54,6 +54,7 @@ Distilled from one real day: two PRs went through staging into one production re
 - `sessions.tsv` holds one line per owner session: its name, a tab, and its transcript `~/.claude/projects/<bucket>/<session-id>.jsonl`. Find the file by the session's title: `grep -l '"customTitle":"<name>"'` on recently changed transcripts.
 - A turn ends with a `stop_hook_summary` record; Claude Desktop sessions don't write `turn_duration`.
 - The script skips progress-only turns and a question it already passed on. It surfaces questions, results, failures and deploy runs.
+- The script keeps each session's baseline in the state folder between runs, so a turn that ends while you restart it is still reported.
 - When a session moves into a new worktree, its transcript moves to that worktree's folder. Update the path, or the watch goes silent.
 - After four quiet hours the script stops. Don't restart it overnight; restart it when the user is back.
 

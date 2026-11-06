@@ -1,6 +1,6 @@
 {
   "name": "small-start",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "description": "Run a hard-to-start day from one Claude Code session: a slide deck kept current at one URL, one small next step with a default answer, work handed to the session or agent that owns it, results checked with screenshots, and deploys waited on in the background.",
   "author": {
     "name": "ryoshumei",
