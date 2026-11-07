@@ -27,6 +27,12 @@ last_text() {
     | tail -n 1 | jq -r 'gsub("\n";" ") | gsub("\\*\\*";"") | .[0:400]' 2>/dev/null
 }
 
+# 途中経過かどうかは最初の一文だけで見る。結果報告の「次は…还在跑」で結果ごと飛ばさないように
+lead_of() {
+  local l="${1%%[。！？!?]*}"
+  printf '%s' "${l:0:80}"
+}
+
 deploys() {
   [ -z "$TAGRE" ] && return
   gh api 'repos/{owner}/{repo}/actions/runs?per_page=15' \
@@ -59,7 +65,7 @@ while [ "$(date +%s)" -lt "$END" ]; do
       txt=$(last_text "${FILES[$i]}")
       # 途中経過だけの回は出さない（質問があれば出す）
       # 「退回」だけだと、結果報告の「退回：」（戻し方の節）まで飛ばしてしまうので、差し戻しの言い方に絞る
-      if printf '%s' "$txt" | grep -qiE "still running|still going|hasn.t reported|sent it back|one more round|another round|review is running|还在跑|还在等|被退回|退回了|退回重做|打回" && ! printf '%s' "$txt" | grep -q "Question"; then
+      if printf '%s' "$(lead_of "$txt")" | grep -qiE "still running|still going|hasn.t reported|sent it back|one more round|another round|review is running|还在跑|还在等|被退回|退回了|退回重做|打回" && ! printf '%s' "$txt" | grep -q "Question"; then
         continue
       fi
       # 同じ質問のくり返しは出さない
