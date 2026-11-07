@@ -27,12 +27,6 @@ last_text() {
     | tail -n 1 | jq -r 'gsub("\n";" ") | gsub("\\*\\*";"") | .[0:400]' 2>/dev/null
 }
 
-# 途中経過かどうかは最初の一文だけで見る。結果報告の「次は…还在跑」で結果ごと飛ばさないように
-lead_of() {
-  local l="${1%%[。！？!?]*}"
-  printf '%s' "${l:0:80}"
-}
-
 deploys() {
   [ -z "$TAGRE" ] && return
   gh api 'repos/{owner}/{repo}/actions/runs?per_page=15' \
@@ -63,18 +57,8 @@ while [ "$(date +%s)" -lt "$END" ]; do
       LAST[$i]=$t
       printf '%s' "$t" > "$STATE/.watch-last-$(key "${NAMES[$i]}")"
       txt=$(last_text "${FILES[$i]}")
-      # 途中経過だけの回は出さない（質問があれば出す）
-      # 「退回」だけだと、結果報告の「退回：」（戻し方の節）まで飛ばしてしまうので、差し戻しの言い方に絞る
-      if printf '%s' "$(lead_of "$txt")" | grep -qiE "still running|still going|hasn.t reported|sent it back|one more round|another round|review is running|还在跑|还在等|被退回|退回了|退回重做|打回" && ! printf '%s' "$txt" | grep -q "Question"; then
-        continue
-      fi
-      # 同じ質問のくり返しは出さない
-      q=$(printf '%s' "$txt" | grep -o "Question:.*" | head -c 200)
-      qf="$STATE/.watch-lastq-$(key "${NAMES[$i]}")"
-      if [ -n "$q" ] && [ -f "$qf" ] && [ "$q" = "$(cat "$qf")" ]; then
-        continue
-      fi
-      [ -n "$q" ] && printf '%s' "$q" > "$qf"
+      # 終わったターンはすべて出す。途中経過か結果かを決めるのは前台（モデル）で、スクリプトはキーワードで判断しない。
+      # キーワードで飛ばしていた頃は、「退回：」の節や「还在跑」を含む結果報告まで黙って捨てていた
       OUT="${OUT}[${NAMES[$i]}] $(date '+%H:%M') 一轮结束：${txt}"$'\n'
     fi
   done

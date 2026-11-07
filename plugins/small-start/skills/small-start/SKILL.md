@@ -53,7 +53,7 @@ Distilled from one real day: two PRs went through staging into one production re
 - Run `scripts/watch-sessions.sh <sessions.tsv> '<tag-regex>'` with Bash `run_in_background`. It exits on the first event and prints the session name and the first 400 characters of its last reply, so you rarely need to read the transcript again. Start it again after each event. A Monitor would expire every 30 minutes instead.
 - `sessions.tsv` holds one line per owner session: its name, a tab, and its transcript `~/.claude/projects/<bucket>/<session-id>.jsonl`. Find the file by the session's title: `grep -l '"customTitle":"<name>"'` on recently changed transcripts.
 - A turn ends with a `stop_hook_summary` record; Claude Desktop sessions don't write `turn_duration`.
-- The script skips progress-only turns and a question it already passed on. It surfaces questions, results, failures and deploy runs.
+- The script reports every finished turn and every deploy run, and judges none of them. You read each one and decide: pass on questions, results and failures; record progress-only turns on the deck without messaging the user. Keyword filters in the script silently dropped real results (a report with a 「退回：」 rollback section, a result whose next steps said 还在跑), so the judgment stays with the model.
 - The script keeps each session's baseline in the state folder between runs, so a turn that ends while you restart it is still reported.
 - When a session moves into a new worktree, its transcript moves to that worktree's folder. Update the path, or the watch goes silent.
 - After four quiet hours the script stops. Don't restart it overnight; restart it when the user is back.
